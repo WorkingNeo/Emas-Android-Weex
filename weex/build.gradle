@@ -1,0 +1,82 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0.0.2"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+
+    compile('com.android.support:appcompat-v7:26.1.0@aar') { transitive true }
+    compile('com.android.support:recyclerview-v7:26.1.0') { transitive true }
+
+    // weex
+    compile "com.taobao.android:weex_sdk:0.16.0"
+
+    compile 'com.alibaba:fastjson:1.1.46.android'
+    // picasso
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    // okhttp
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
+
+
+    compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
+    compile 'com.google.zxing:core:3.2.1'
+
+    provided 'org.asialee.weex:weexplugin:1.0.0'
+    provided "com.airbnb.android:lottie:2.3.1"
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+apply plugin: 'maven'
+def GROUP_ID = "com.taobao.emas.weex"
+def ARTIFACT_ID = "weex"
+def VERSION_NAME = "1.0.0.9-SNAPSHOT"
+def MAVEN_PATH = "http://mvnrepo.alibaba-inc.com/nexus/content/repositories/snapshots/"
+def USERNAME = properties.getProperty("username")
+def PASSWORD = properties.getProperty("password")
+
+
+// 发布项目到maven仓库
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url:MAVEN_PATH ){
+                authentication(userName: USERNAME, password: PASSWORD)}
+            pom.project {
+                groupId GROUP_ID
+                artifactId ARTIFACT_ID
+                version VERSION_NAME
+                packaging 'aar'
+            }
+        }
+    }
+}
